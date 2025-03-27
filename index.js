@@ -24,8 +24,10 @@ passport.use(
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     },
-    () => {
+    (accessToken, refreshToken, profile, done) => {
       // passport callback function
+      console.log(profile)
+      console.log("passport callback function fired");
     }
   )
 );
@@ -41,14 +43,18 @@ app.get("/auth/logout", async (req, res) => {
 app.get(
   "/auth/google",
   passport.authenticate("google", {
-    scope: ["profile"],  //this will show google screen
+    scope: ["profile"], //this will show google screen
   })
 );
 
 // callback route for google to redirect to
-// app.get('/auth/google/redirect',async(req,res)=>{
-
-// })
+app.get(
+  "/auth/google/redirect",
+  passport.authenticate("google"),
+  async (req, res) => {
+    res.send("reched callback page");
+  }
+);
 
 app.get("/", (req, res) => {
   res.send("oAuth 2.0 with passport server is running");
